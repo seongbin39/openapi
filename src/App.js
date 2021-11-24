@@ -8,55 +8,64 @@ import Sms from './RealTimeSms'
 function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState([])
-  const [numOfRows, setNumOfRows] = useState(5)
+  const [query, setQuery] = useState('')
+  const [numOfRows, setNumOfRows] = useState(99)
   const [pageNo, setPageNo] = useState(1)
   const [pageSize, setPageSize] = useState(null)
   
-  // const getRealTimeSMS = () => {
-  //   const API_KEY = process.env.REACT_APP_API_KEY
-  //   const test = pageNo
-  //   const url = `http://data.ex.co.kr/openapi/burstInfo/realTimeSms?key=${API_KEY}&type=json&numOfRows=1&pageNo=1&sortType=desc&pagingYn=Y` 
-
-  //   axios.get(url).then((res) => {
-  //     const data = res.data.list
-  //     const pageSize = res.data.pageSize
-  //   })
-  // }
-
   useEffect( () => {
     // GetFood(foodId).then(data => setData(data))
     const API_KEY = process.env.REACT_APP_API_KEY
     const url = `http://data.ex.co.kr/openapi/business/representFoodServiceArea?key=${API_KEY}&type=json&numOfRows=${numOfRows}&pageNo=${pageNo}`
-    axios.get(url).then((res) => {
+    axios.get(url).then(async (res) => {
       const data = res.data.list
       const pageSize = res.data.pageSize
-      // const pageNo = res.data.pageNo
+      const pageNo = res.data.pageNo
+      // setData(...data, data)
 
-    //   console.log(data)
-    //   console.log(pageSize)
-      console.log(pageNo)
-
+      // console.log(pageNo)
+      
       setIsLoading(false)
       setData(data)
+      console.log(data)
       setPageSize(pageSize)
+
+      // const res2 = axios.get(`http://data.ex.co.kr/openapi/business/representFoodServiceArea?key=${API_KEY}&type=json&numOfRows=${numOfRows}&pageNo=2`)
+      // .then(async (res) => {
+      //   const data2 = res.data.list
+      //   const temp = data.concat(...data2)
+      //   const res3 = axios.get(`http://data.ex.co.kr/openapi/business/representFoodServiceArea?key=${API_KEY}&type=json&numOfRows=${numOfRows}&pageNo=3`)
+      //   .then((res) => {
+      //     const data3 = res.data.list
+      //     const full = temp.concat(data3)
+      //     setData(full)
+
+      //     setQuery('부산')
+
+      //     console.log(full)
+      //     // console.log(data.direction)
+      //   })
+      // })
+
     })
-  },[pageNo])
+  },[])
 
-  const nextPage = () => {
-    const nextPage = pageNo +1
-    setPageNo(() => {
-      return (nextPage<=pageSize) ? nextPage : pageNo
-    })
-  }
-
-  const prevPage = () => {
-    const prevPage = pageNo -1
-    setPageNo((prevPage>0) ? prevPage : pageNo+0)
-  }
-
-  const changeRows = () => {
-    setNumOfRows(numOfRows===10? numOfRows=5 : numOfRows=10)
-  }
+  // const foodUI = 
+  //     console.log(data[0].serviceAreaName)
+  //     // .filter(data => {
+  //     //   const direction = data.direction   
+  //     //   const q = query
+  //     //   return direction.includes('부산')
+  //     // })
+      
+  //     data.map((data,cnt) => {
+  //       <Food
+  //         key = {cnt}
+  //         serviceAreaName = {data.serviceAreaName}
+  //         svarAddr = {data.svarAddr}
+  //         batchMenu = {data.batchMenu}
+  //         salePrice = {data.salePrice} />
+  //     })
 
   return(
     <div className="App">
@@ -66,7 +75,13 @@ function App() {
         </div>
       ): (
         <div>
-          {data.map((d,cnt) => {
+          {data
+          .filter(data => {
+            const direction = data.routeCode
+            const q = '0010'
+            return direction.includes(q)
+          })
+          .map((d,cnt) => {
             return (
               <Food
               key = {cnt}
@@ -80,10 +95,10 @@ function App() {
               </Food>
             )
           })}
-          <Button handleClick={prevPage}>이전 페이지</Button>
-          {pageNo}/{pageSize}
-          <Button handleClick={nextPage}>다음 페이지</Button>
-          {/* <Button handleClick={changeRows}>{numOfRows===10? 5:10}개씩 보기</Button> */}
+            
+          {/* <Button handleClick={prevPage}>이전 페이지</Button> */}
+          {/* {pageNo}/{pageSize} */}
+          {/* <Button handleClick={nextPage}>다음 페이지</Button> */}
         </div>
       )}
     </div>
@@ -146,5 +161,21 @@ function App() {
 //     )
 //   }
 // }
+
+  // const nextPage = () => {
+  //   const nextPage = pageNo +1
+  //   setPageNo(() => {
+  //     return (nextPage<=pageSize) ? nextPage : pageNo
+  //   })
+  // }
+
+  // const prevPage = () => {
+  //   const prevPage = pageNo -1
+  //   setPageNo((prevPage>0) ? prevPage : pageNo+0)
+  // }
+
+  // const changeRows = () => {
+  //   setNumOfRows(numOfRows===10? numOfRows=5 : numOfRows=10)
+  // }
 
 export default App;
